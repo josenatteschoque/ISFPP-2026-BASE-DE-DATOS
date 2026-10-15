@@ -1,0 +1,24 @@
+Economia(Id_Economia, Tasa_Inflacion, Tasa_Desempleo, GDP){
+PK Id_Economia}
+
+Estudiante(Id_Estudiante, Becario, Genero, Nacionalidad, Estado_Civil, Necesidades_Educativas_Especiales, Desplazado_Trasladado, Estado_Academico){
+PK Id_Alumno
+FK Id_Economia referencia a Economia
+FK Id_Familia referencia a Datos_Familia}
+
+Datos_Familia(Id_Familia, Nivel_Educativo_Madre, Nivel_Educativo_Padre, Ocupacion_Laboral_Padre, Ocupacion_Laboral_Madre){
+PK Id_Familia}
+
+Rendimiento Academico(Nro_Semestre, Materias_Acreditadas, Materias_Inscriptas, Materias_Aprovadas, Promedio_Notas){
+PK Nro_Semestre
+FK PK Id_Estudiante referencia a Estudiante}
+
+Inscripción(Id_Inscripcion, Edad_Ingreso, Calificacion_Admision, Nivel_Educativo_Previo, Nota_Titulacion_Previa, Orden_Preferencia){
+PK Id_Inscripcion
+FK Id_Carrera referencia a Carrera
+FK ID_EStudiante referencia a Estudiante}
+
+Carrera(Id_Carrera, Modalidad_Horaria){
+PK Id_Carrera}
+
+Mensaje: El modelado tabular aun le faltan los checks pero eso lo veremos según avancemos.
