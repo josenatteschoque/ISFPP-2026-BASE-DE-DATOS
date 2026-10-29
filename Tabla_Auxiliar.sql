@@ -44,3 +44,6 @@ CREATE TABLE datos_crudos (
 --Chekeo si estan los datos cargados
 SELECT *
 FROM datos_crudos
+
+SELECT na."Nacionality"
+FROM datos_crudos na
