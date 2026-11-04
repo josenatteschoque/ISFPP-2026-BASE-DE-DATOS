@@ -13,6 +13,29 @@ FROM estudiante e
 --Los agrupo por su estado_academico
 GROUP BY e.estado_academico;
 
+--########################
 --Pruebo la vista
 SELECT *
 FROM v_estado_academico
+
+------------------------------------------
+
+--Esta vista te permite ver cuantos estudiantes tienen o no una beca
+CREATE VIEW v_total_becarios AS
+
+SELECT e.becario, 
+
+--Cuanto cuantos estudiantes son
+	COUNT(*) AS total_estudiantes
+
+--Uso la tabla estudiante
+FROM estudiante e
+
+--Agrupo por los que tiene o no beca
+GROUP BY e.becario;
+
+--#################################
+--Pruebo la vista
+SELECT *
+FROM v_total_becarios
+
