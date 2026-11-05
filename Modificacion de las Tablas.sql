@@ -1,6 +1,6 @@
 SET search_path TO "mdA_educacion";
 
---cambiamos las restricciones ya que si no nos daria algunos fallos ala hora de la carga de datos en si 
+--cambiamos las restricciones ya que si no nos daria algunos fallos a la hora de la carga de datos en si 
 --o como rangos no contemplados en los anteriores checks
 ALTER TABLE estudiante  DROP CONSTRAINT chk_estado_civil;
 ALTER TABLE estudiante  ADD CONSTRAINT chk_estado_civil
@@ -17,6 +17,12 @@ ALTER TABLE inscripcion ADD CONSTRAINT chk_edad_ingreso
 ALTER TABLE inscripcion DROP CONSTRAINT chk_nota_titulacion_previa;
 ALTER TABLE inscripcion ADD CONSTRAINT chk_nota_titulacion_previa
   CHECK (nota_titulacion_previa >= 95);
+
+-- nuevo cambio le agrego una columna id_estudiante a la tabla data 
+ALTER TABLE data
+ADD COLUMN id_estudiante SMALLINT
+GENERATED ALWAYS AS IDENTITY;
+
 
 --///////////////////////////////////////////
 --aca se modifico el nombre de la columna ya que contaba con una tabulacion de mas
