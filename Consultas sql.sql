@@ -41,3 +41,20 @@ FROM information_schema.columns
 WHERE table_schema = 'mdA_educacion'
   AND table_name = 'data'
   AND column_name <> TRIM(column_name);
+
+
+--Con esta consulta agrupo a todos los estudiantes con sus tasas de inflacion
+SELECT c.tasa_inflacion, e.estado_academico, COUNT(*)
+FROM estudiante e
+JOIN economia c 
+ ON c.id_economia = e.id_economia
+GROUP BY tasa_inflacion, e.estado_academico
+ORDER BY 1, 2
+
+--Con esta consulta veo a todos los estudiantes que abandonaron la carrera y sus tasas de inflacion
+SELECT e.id_estudiante ,c.tasa_inflacion, e.estado_academico
+FROM estudiante e
+JOIN economia c 
+ ON c.id_economia = e.id_economia
+WHERE e.estado_academico = 'Abandono'
+
