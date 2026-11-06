@@ -58,3 +58,9 @@ JOIN economia c
  ON c.id_economia = e.id_economia
 WHERE e.estado_academico = 'Abandono'
 
+
+--Con esta consulta Comparo la cantidad de estudiantes que abandonaron,graduaron o siguen estudiando, según si reciben una beca o no
+SELECT becario,estado_academico,count(*)
+FROM estudiante
+group by becario,estado_academico
+order by 1,2;
