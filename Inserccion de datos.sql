@@ -1,4 +1,5 @@
 SET search_path TO "mdA_educacion";
+
 --///////////////// CARRERA //////////////////////////////////////////
 SELECT DISTINCT "Target" FROM data;
   
@@ -118,3 +119,37 @@ FROM data;
 SELECT * FROM rendimiento_academico
 ORDER BY id_estudiante, nro_semestre;
 
+
+
+-- ////////////////// INSCRIPCION //////////////////////////////////
+--Cargo la tabla Inscripcion 
+INSERT INTO inscripcion (
+    id_inscripcion,
+    edad_ingreso,
+    calificacion_admision,
+    nivel_educativo_previo,
+    nota_titulacion_previa,
+    orden_preferencia,
+    id_carrera,
+    id_estudiante
+)
+SELECT
+    d.id_estudent::SMALLINT AS id_inscripcion, -- Usamos el ID del estudiante para mantener la relación 1 a 1
+    d."Age at enrollment"::INT,
+    d."Admission grade"::FLOAT,
+    d."Previous qualification"::INT,
+    d."Previous qualification (grade)"::FLOAT,
+    d."Application order"::INT,
+    c.id_carrera,     -- FK que viene de la tabla carrera
+    e.id_estudiante   -- FK que viene de la tabla estudiante
+FROM data d
+-- Hacemos el JOIN con carrera usando el campo Course de la tabla data
+JOIN carrera c 
+    ON c.id_carrera = d."Course"::NUMERIC::SMALLINT
+-- Hacemos el JOIN con estudiante usando el ID generado
+JOIN estudiante e 
+    ON e.id_estudiante = d.id_estudent::SMALLINT;
+
+--Me fijo si se cargo bien la tabla
+SELECT *
+FROM inscripcion
