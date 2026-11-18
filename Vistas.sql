@@ -63,3 +63,26 @@ GROUP BY c.id_carrera, c.modalidad_horaria;
 SELECT * 
 FROM v_resumen_ingreso ORDER BY id_carrera;
 
+
+------------------------------------------
+--Vista que muestra el rendimiento académico agrupado por semestre y estado del estudiante
+CREATE OR REPLACE VIEW v_rendimiento_semestre AS
+SELECT 
+    r.nro_semestre,
+    e.estado_academico,
+	--Con DISTINCT solo cuenta sin repetir
+    COUNT(DISTINCT e.id_estudiante) AS total_estudiantes,
+	--Calculo el promedio de las notas
+    ROUND(AVG(r.promedio_notas::NUMERIC), 2) AS promedio_general_notas,
+	--Calculo el promedio de materias aprobadas
+    ROUND(AVG(r.materias_aprobadas::NUMERIC), 2) AS promedio_materias_aprobadas
+FROM estudiante e
+JOIN rendimiento_academico r 
+    ON e.id_estudiante = r.id_estudiante
+GROUP BY r.nro_semestre, e.estado_academico;
+
+--Pruebo la vista
+SELECT *
+FROM v_rendimiento_semestre
+
+
