@@ -64,3 +64,12 @@ SELECT becario,estado_academico,count(*)
 FROM estudiante
 group by becario,estado_academico
 order by 1,2;
+
+--Esta consulta me da una lista de los estudiantes que dejaron la carrera mostrando la educacion de sus padres
+SELECT e.id_estudiante, e.estado_academico, d.nivel_educativo_madre, d.nivel_educativo_padre
+fROM estudiante e
+JOIN datos_familia d
+	ON d.id_familia = e.id_familia
+WHERE e.estado_academico = 'Abandono'
+ORDER BY e.id_estudiante ASC
+	
