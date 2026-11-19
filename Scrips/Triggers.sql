@@ -51,3 +51,41 @@ Where id_estudiante = 1000
 --Y aqui me fije los datos que guardo 
 SELECT *
 FROM estudiante_historial
+
+
+-- un trigger que evita registrar cantidades de materias aprobadas superiores a las materias inscriptas
+-- no guardar datos académicos inconsistentes cuando se cargan o modifican resultados
+CREATE OR REPLACE FUNCTION verificar_materias_aprobadas()
+RETURNS TRIGGER AS $$
+BEGIN
+
+    IF NEW.materias_aprobadas > NEW.materias_inscriptas
+    THEN
+        RAISE EXCEPTION
+        'Las materias aprobadas no pueden superar las materias inscriptas';
+    END IF;
+
+    RETURN NEW;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trg_verificar_materias_aprobadas
+BEFORE INSERT OR UPDATE
+ON rendimiento_academico
+FOR EACH ROW
+EXECUTE FUNCTION verificar_materias_aprobadas();
+
+-- modifico un estudiante con la misma cantidad de materias aprobadas como inscriptas
+UPDATE rendimiento_academico
+SET materias_inscriptas = 6,
+    materias_aprobadas = 8
+WHERE id_estudiante = 300
+  AND nro_semestre = 1;
+
+
+SELECT * FROM rendimiento_academico
+WHERE id_estudiante = 300
+  AND nro_semestre = 1;
+
