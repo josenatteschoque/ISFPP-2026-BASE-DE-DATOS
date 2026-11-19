@@ -85,3 +85,139 @@ $$;
 CALL EliminarEstudiante(999999);
 CALL EliminarEstudiante(1500);
 CALL EliminarEstudiante(1501);
+
+
+---------------------------------------------------------------------------------------------
+-- Procedimiento para registrar un nuevo estudiante a una carrera existente
+-- junto con sus datos familiares y su inscripción
+CREATE OR REPLACE PROCEDURE RegistrarEstudianteConInscripcion(
+     -- Datos familiares
+    IN p_id_familia INT,
+	IN p_nivel_educativo_madre INT,
+    IN p_nivel_educativo_padre INT,
+    IN p_ocupacion_laboral_madre INT,
+    IN p_ocupacion_laboral_padre INT,
+
+    -- Datos del estudiante
+	IN p_id_estudiante INT,
+    IN p_becario INT,
+    IN p_genero INT,
+    IN p_nacionalidad INT,
+    IN p_estado_civil INT,
+    IN p_necesidades_educativas_especiales INT,
+    IN p_desplazado_trasladado INT,
+
+    -- Datos de inscripción
+	IN p_id_inscripcion INT,
+    IN p_edad_ingreso INT,
+    IN p_calificacion_admision FLOAT,
+    IN p_nivel_educativo_previo INT,
+    IN p_nota_titulacion_previa FLOAT,
+    IN p_orden_preferencia INT,
+
+	 IN p_id_carrera INT,
+    IN p_id_economia INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+    --  Validar los nuevos identificadores
+    IF p_id_estudiante IS NULL OR p_id_estudiante <= 0
+       OR p_id_familia IS NULL OR p_id_familia <= 0
+       OR p_id_inscripcion IS NULL OR p_id_inscripcion <= 0
+    THEN
+        RAISE EXCEPTION
+        'Los identificadores tienen que ser positivos';
+    END IF;
+
+     --Validamos si la carrera realmente existe
+    IF p_id_carrera IS NULL OR NOT EXISTS (
+        SELECT 1 FROM carrera
+        WHERE id_carrera = p_id_carrera
+    ) THEN
+        RAISE EXCEPTION 'La carrera no existe';
+    END IF;
+
+    --  Verificar que exista el registro económico
+    IF p_id_economia IS NULL OR NOT EXISTS (
+        SELECT 1 FROM economia
+        WHERE id_economia = p_id_economia
+    ) THEN
+        RAISE EXCEPTION
+        'El registro economico no existe';
+    END IF;
+
+    --  Verificar que complete los datos familiares
+    IF p_nivel_educativo_madre IS NULL
+       OR p_nivel_educativo_padre IS NULL
+       OR p_ocupacion_laboral_madre IS NULL
+       OR p_ocupacion_laboral_padre IS NULL
+    THEN
+        RAISE EXCEPTION
+        'Debe completar todos los datos familiares';
+    END IF;
+
+    --  Verificar que complete los datos de inscripcion
+    IF p_edad_ingreso IS NULL
+       OR p_calificacion_admision IS NULL
+       OR p_nivel_educativo_previo IS NULL
+       OR p_nota_titulacion_previa IS NULL
+       OR p_orden_preferencia IS NULL
+    THEN
+        RAISE EXCEPTION
+        'Debe completar todos los datos de inscripción';
+    END IF;
+
+    --  Registrar los datos familiares
+    INSERT INTO datos_familia (id_familia,nivel_educativo_madre,nivel_educativo_padre,ocupacion_laboral_madre,ocupacion_laboral_padre)
+    VALUES (p_id_familia,p_nivel_educativo_madre,p_nivel_educativo_padre,p_ocupacion_laboral_madre,p_ocupacion_laboral_padre);
+
+    --  Registrar al estudiante
+    -- El estado se le asigna automaticamente
+    INSERT INTO estudiante (id_estudiante,becario,genero,nacionalidad,estado_civil,necesidades_educativas_especiales,desplazado_trasladado,estado_academico,id_economia,id_familia)
+    VALUES (p_id_estudiante,p_becario,p_genero,p_nacionalidad,p_estado_civil,p_necesidades_educativas_especiales,p_desplazado_trasladado,'Estudiando',p_id_economia,p_id_familia);
+
+    --  Registrar la inscripcion a una carrera
+    INSERT INTO inscripcion (id_inscripcion,edad_ingreso,calificacion_admision,nivel_educativo_previo,nota_titulacion_previa,orden_preferencia,id_carrera,id_estudiante)
+    VALUES (p_id_inscripcion,p_edad_ingreso,p_calificacion_admision,p_nivel_educativo_previo,p_nota_titulacion_previa,p_orden_preferencia,p_id_carrera,p_id_estudiante);
+
+    RAISE NOTICE
+    'El estudiante % fue registrado e inscripto correctamente en la carrera %',
+    p_id_estudiante, p_id_carrera;
+	
+END;
+$$;
+
+-- pruebo el procedimiento
+CALL RegistrarEstudianteConInscripcion(
+
+    -- Datos familiares
+    30000, -- ID familia
+    4,     -- Nivel educativo madre
+    3,     -- Nivel educativo padre
+    5,     -- Ocupación madre
+    4,     -- Ocupación padre
+
+    -- Datos del estudiante
+    30001, -- ID estudiante
+    0,     -- Becario
+    1,     -- Género
+    1,     -- Nacionalidad
+    1,     -- Estado civil
+    0,     -- Necesidades educativas especiales
+    0,     -- Desplazado/trasladado
+
+    -- Datos de inscripcion
+    30002, -- ID inscripcion
+    19,    -- Edad de ingreso
+    150,   -- Calificación de admision
+    1,     -- Nivel educativo previo
+    160,   -- Nota titulación previa
+    1,     -- Orden de preferencia
+
+    -- Carrera y economia
+    9853,  -- ID carrera
+    1      -- ID economía
+);
+
