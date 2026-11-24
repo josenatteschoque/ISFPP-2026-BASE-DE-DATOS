@@ -52,7 +52,7 @@ Where id_estudiante = 1000
 SELECT *
 FROM estudiante_historial
 
-
+--///////////////// VERIFICAR MATERIAS APROBADAS ///////////////////////////////////////////
 -- un trigger que evita registrar cantidades de materias aprobadas superiores a las materias inscriptas
 -- no guardar datos académicos inconsistentes cuando se cargan o modifican resultados
 CREATE OR REPLACE FUNCTION verificar_materias_aprobadas()
