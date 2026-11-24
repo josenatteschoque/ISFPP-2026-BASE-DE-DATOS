@@ -72,4 +72,29 @@ JOIN datos_familia d
 	ON d.id_familia = e.id_familia
 WHERE e.estado_academico = 'Abandono'
 ORDER BY e.id_estudiante ASC
-	
+
+--Esta consulta me permite ver cuantos estudiantes dejaron la carrera segun su modalidad horaria
+SELECT c.modalidad_horaria, e.estado_academico, COUNT(*) AS total_alumnos
+FROM estudiante e
+JOIN inscripcion i
+	ON i.id_estudiante = e.id_estudiante
+	JOIN carrera c
+		ON c.id_carrera = i.id_carrera
+WHERE e.estado_academico = 'Abandono'
+GROUP BY e.estado_academico, c.modalidad_horaria
+
+
+SET search_path TO "mdA_educacion";
+
+--Esta consulta me permite ver los estudiantes que abandonaron y como les fue en su curso usando una vista
+SELECT 
+    v.nro_semestre,
+    v.estado_academico,
+    v.total_estudiantes,
+    v.promedio_general_notas,
+    v.promedio_materias_aprobadas
+FROM v_rendimiento_semestre v
+WHERE v.estado_academico = 'Abandono'
+ORDER BY v.nro_semestre ASC;
+
+
