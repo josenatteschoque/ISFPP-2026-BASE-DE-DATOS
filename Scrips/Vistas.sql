@@ -86,3 +86,39 @@ SELECT *
 FROM v_rendimiento_semestre
 
 
+--------------------------------------------------------------------------------------------------------------
+-- esta vista muestra si aquellos que tenian una calificacion de admision alta tienen mejor promedio o no 
+CREATE OR REPLACE VIEW v_calificacion_admision AS
+SELECT i.calificacion_admision,r.nro_semestre,
+AVG(r.promedio_notas::NUMERIC) AS promedio_academico
+from inscripcion i
+join rendimiento_academico r 
+on i.id_estudiante = r.id_estudiante
+group by i.calificacion_admision,r.nro_semestre
+
+-- pruebo la vista
+SELECT *
+FROM  v_calificacion_admision 
+ORDER BY nro_semestre ASC,calificacion_admision DESC;
+
+----------------------------------------------------------------------------------------------------------------
+--1 - soltero
+--2 – casado
+--3 – viudo 
+--4 – divorciado
+--5 – unión facto
+--6 – separado legalmente
+
+-- esta vista muestra el rendimiento academico del estudiante segun el estado civil que tenga 
+CREATE OR REPLACE VIEW v_estado_civil AS
+SELECT e.estado_civil,AVG(r.promedio_notas :: NUMERIC) AS promedio_academico
+from estudiante e 
+join rendimiento_academico r 
+on e.id_estudiante = r.id_estudiante
+group by e.estado_civil;
+
+-- pruebo la vista
+SELECT *
+FROM v_estado_civil
+ORDER BY promedio_academico DESC;
+
